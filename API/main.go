@@ -31,10 +31,10 @@ func main() {
 		fmt.Println(info_campeom_URL)
 
 		// Obtener la información específica del campeón
-		infoBody, errCampeon := handlers.GetChampions(info_campeom_URL)
+		infoBody, err := handlers.GetChampions(info_campeom_URL)
 
-		if errCampeon != nil {
-			fmt.Println("Error al obtener información del campeón:", errCampeon)
+		if err != nil {
+			fmt.Println("Error al obtener información del campeón:", err)
 			return
 		}
 		var infoCampeon handlers.Data
@@ -44,7 +44,7 @@ func main() {
 		}
 
 		// Acceder a las skins del campeón específico
-		fmt.Println("Skins del campeón:", infoCampeon.Champion[championHandler.Id].Skins)
+		//fmt.Println("Skins del campeón:", infoCampeon.Champion[championHandler.Id].Skins)
 	}
 
 }
