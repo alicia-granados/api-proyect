@@ -1,6 +1,7 @@
 package main
 
 import (
+	"API/db"
 	"API/handlers"
 	"encoding/json"
 	"fmt"
@@ -8,43 +9,71 @@ import (
 )
 
 func main() {
-	//url para traer todos los ddatos de los campeones
-	apiURL := `https://ddragon.leagueoflegends.com/cdn/13.24.1/data/es_MX/champion.json`
 
+	// URL to fetch all champion data
+	apiURL := `https://ddragon.leagueoflegends.com/cdn/13.24.1/data/es_MX/champion.json`
 	body, err := handlers.GetChampions(apiURL)
 	if err != nil {
-		log.Fatalln("error al obtener los campeones:", err)
+		log.Fatalln("error fetching champions:", err)
 	}
 
-	// Decodificar el JSON en una estructura de datos
+	// Decode JSON into a data structure
 	var data handlers.GenericData
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		log.Fatalf("error al decodificar JSON: %v", err)
+		log.Fatalf("error decoding JSON: %v", err)
 	}
 
-	fmt.Println(data)
+	db.Connect()
+	defer db.Close()
 
 	for _, championHandler := range data.GenericChampions {
 
-		info_campeom_URL := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/13.24.1/data/es_MX/champion/%s.json", championHandler.Id)
-		fmt.Println(info_campeom_URL)
+		infoCampeonURL := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/13.24.1/data/es_MX/champion/%s.json", championHandler.Id)
+		fmt.Println(infoCampeonURL)
 
-		// Obtener la información específica del campeón
-		infoBody, err := handlers.GetChampions(info_campeom_URL)
+		// Get specific champion information
+		infoBody, err := handlers.GetChampions(infoCampeonURL)
 
 		if err != nil {
-			fmt.Println("Error al obtener información del campeón:", err)
+			fmt.Println("Error fetching champion information:", err)
 			return
 		}
 		var infoCampeon handlers.Data
 		err = json.Unmarshal(infoBody, &infoCampeon)
 		if err != nil {
-			log.Fatalf("error al decodificar JSON: %v", err)
+			log.Fatalf("error decoding JSON: %v", err)
 		}
 
-		// Acceder a las skins del campeón específico
-		//fmt.Println("Skins del campeón:", infoCampeon.Champion[championHandler.Id].Skins)
+		// Access the champion's
+		fmt.Println("Champion :", infoCampeon.Champion[championHandler.Id])
+
+		infCampeon := infoCampeon.Champion[championHandler.Id]
+
+		championID, err := db.GetChampionID(infCampeon.Id)
+		if err != nil {
+			log.Fatalf("Error getting the champion ID:%s", err)
+			continue
+		}
+
+		if championID == 0 {
+			// Insert the champion and get its ID
+			_, err := db.InsertChampion(infCampeon.Name, infCampeon.Title, infCampeon.Lore)
+			if err != nil {
+				log.Fatalf("Error inserting the champion: %s", err)
+				continue
+			}
+		}
+
+		// Access the champion's tags
+		tags := infoCampeon.Champion[championHandler.Id].Tags
+		handlers.ProcessTags(tags, championHandler.Id)
+
+		// Iterate over the champion's skins
+		// Access the champion's skins
+		skins := infoCampeon.Champion[championHandler.Id].Skins
+		handlers.ProcesSkins(skins, championHandler.Id)
+
 	}
 
 }
