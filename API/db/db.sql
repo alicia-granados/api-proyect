@@ -1,10 +1,10 @@
--- Crear la base de datos si no existe
+-- Create the database if it does not exist
 CREATE DATABASE IF NOT EXISTS game_champion;
 
--- Utilizar la base de datos
+-- Use the database
 USE game_champion;
 
--- Crear la tabla Champion
+-- Create the Champion table
 CREATE TABLE Champion (
     Id    INT AUTO_INCREMENT PRIMARY KEY,
     Name  VARCHAR(255),
@@ -12,18 +12,18 @@ CREATE TABLE Champion (
     Lore  TEXT
 );
 
--- Crear la tabla Skins
+-- Create the Skins table
 CREATE TABLE Skins (
-    Id   INT AUTO_INCREMENT PRIMARY KEY,
-    Id_Num  VARCHAR(255) UNIQUE,
-    Num    INT ,
-    Id_Champion INT, 
-    Name VARCHAR(255) 
+    Id          INT AUTO_INCREMENT PRIMARY KEY,
+    Id_Num      VARCHAR(255) UNIQUE,
+    Num         INT,
+    Id_Champion INT,
+    Name        VARCHAR(255)
 );
 
--- Crear la tabla Tags
+-- Create the Tags table
 CREATE TABLE Tags (
-    Id   INT AUTO_INCREMENT PRIMARY KEY,
+    Id          INT AUTO_INCREMENT PRIMARY KEY,
     Id_Champion INT,
-    Name VARCHAR(255) UNIQUE
+    Name        VARCHAR(255)
 );
