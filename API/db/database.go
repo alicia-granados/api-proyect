@@ -8,14 +8,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Database connection string
-const dsn = "root:@tcp(localhost:3306)/game_champion"
-
 // Holds the database connection
 var db *sql.DB
 
 // Establishes a database connection
 func Connect() {
+	dsn := DSN()
 	conection, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
