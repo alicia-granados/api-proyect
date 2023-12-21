@@ -8,35 +8,50 @@ import (
 	"net/http"
 )
 
-func GetChampions(apiURL string) ([]byte, error) {
-	// peticion get a la api de league of legends
+func APIRequest(apiURL string) ([]byte, error) {
+	// Make a GET request to the League of Legends API
 	response, err := http.Get(apiURL)
 	if err != nil {
-		return nil, fmt.Errorf("error al hacer la solicitud: %v", err)
+		return nil, fmt.Errorf("error making the request: %v", err)
 	}
-	//se asegura que el body se cierre bien
+	// Ensure that the body is closed properly
 	defer response.Body.Close()
 
-	// Verificar el código de estado de la respuesta
+	// Check the status code of the response
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("la API devolvió un código de estado no válido: %v", response.Status)
+		return nil, fmt.Errorf("the API returned an invalid status code: %v", response.Status)
 	}
 
-	// Leer todo el contenido del cuerpo de la respuesta
+	// Read the entire content of the response body
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-
-		return nil, fmt.Errorf("error al leer el cuerpo de la response:%v", err)
+		return nil, fmt.Errorf("error reading the response body: %v", err)
 	}
 
 	return body, nil
+}
+
+func ProcessChampions(infCampeon Champion) {
+
+	championID, err := db.GetChampionID(infCampeon.Id)
+	if err != nil {
+		log.Fatalf("Error getting the champion ID:%s", err)
+	}
+
+	if championID == 0 {
+		// Insert the champion and get its ID
+		_, err := db.InsertChampion(infCampeon.Name, infCampeon.Title, infCampeon.Lore)
+		if err != nil {
+			log.Fatalf("Error inserting the champion: %s", err)
+		}
+	}
+
 }
 
 func ProcessTags(tags []string, championName string) {
 
 	// Iterate over the champion's tags
 	for _, tag := range tags {
-		fmt.Println("TAGSSS-------------------------", tag)
 
 		championID, err := db.GetChampionID(championName)
 		if err != nil {

@@ -12,7 +12,7 @@ func main() {
 
 	// URL to fetch all champion data
 	apiURL := `https://ddragon.leagueoflegends.com/cdn/13.24.1/data/es_MX/champion.json`
-	body, err := handlers.GetChampions(apiURL)
+	body, err := handlers.APIRequest(apiURL)
 	if err != nil {
 		log.Fatalln("error fetching champions:", err)
 	}
@@ -33,7 +33,7 @@ func main() {
 		fmt.Println(infoCampeonURL)
 
 		// Get specific champion information
-		infoBody, err := handlers.GetChampions(infoCampeonURL)
+		infoBody, err := handlers.APIRequest(infoCampeonURL)
 
 		if err != nil {
 			fmt.Println("Error fetching champion information:", err)
@@ -46,24 +46,8 @@ func main() {
 		}
 
 		// Access the champion's
-		fmt.Println("Champion :", infoCampeon.Champion[championHandler.Id])
-
 		infCampeon := infoCampeon.Champion[championHandler.Id]
-
-		championID, err := db.GetChampionID(infCampeon.Id)
-		if err != nil {
-			log.Fatalf("Error getting the champion ID:%s", err)
-			continue
-		}
-
-		if championID == 0 {
-			// Insert the champion and get its ID
-			_, err := db.InsertChampion(infCampeon.Name, infCampeon.Title, infCampeon.Lore)
-			if err != nil {
-				log.Fatalf("Error inserting the champion: %s", err)
-				continue
-			}
-		}
+		handlers.ProcessChampions(infCampeon)
 
 		// Access the champion's tags
 		tags := infoCampeon.Champion[championHandler.Id].Tags
