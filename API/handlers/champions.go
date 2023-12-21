@@ -22,7 +22,7 @@ type Champion struct {
 }
 
 type Skins struct {
-	ID   string `json:"id"`
-	Num  int32  `json:"num"`
-	Name string `json:"name"`
+	Id_Num string `json:"id"`
+	Num    int    `json:"num"`
+	Name   string `json:"name"`
 }

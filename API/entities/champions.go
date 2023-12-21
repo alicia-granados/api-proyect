@@ -10,6 +10,7 @@ type Champion struct {
 }
 
 type Skins struct {
-	Num  int32
-	Name string
+	Id_Num string
+	Num    int32
+	Name   string
 }
