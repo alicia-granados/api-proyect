@@ -32,12 +32,10 @@ func APIRequest(apiURL string) ([]byte, error) {
 }
 
 func ProcessChampions(dbRepo db.DatabaseRepo, infCampeon Champion) {
-
-	championID, err := dbRepo.GetChampionID(infCampeon.Id)
+	championID, err := dbRepo.GetChampionID(infCampeon.Name)
 	if err != nil {
 		log.Fatalf("Error getting the champion ID:%s", err)
 	}
-
 	if championID == 0 {
 		// Insert the champion and get its ID
 		_, err := dbRepo.InsertChampion(infCampeon.Name, infCampeon.Title, infCampeon.Lore)
@@ -70,14 +68,12 @@ func ProcessTags(dbRepo db.DatabaseRepo, tags []string, championName string) {
 func ProcesSkins(dbRepo db.DatabaseRepo, skins []Skins, championName string) {
 
 	for _, skin := range skins {
-
 		// Check if the skin already exists in the Skins table
 		skinID, err := dbRepo.GetSkinID(skin.Id_Num)
 		if err != nil {
 			log.Fatalf("Error getting the skin ID:%s", err)
 			continue
 		}
-
 		// If the skin doesn't exist, insert it and get its ID
 		if skinID == 0 {
 			championID, err := dbRepo.GetChampionID(championName)

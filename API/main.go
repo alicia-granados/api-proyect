@@ -59,7 +59,7 @@ func main() {
 
 		// Access the champion's tags
 		tags := infoCampeon.Champion[championHandler.Id].Tags
-		handlers.ProcessTags(app.DB, tags, championHandler.Id)
+		handlers.ProcessTags(app.DB, tags, infCampeon.Name)
 
 		// Iterate over the champion's skins
 		// Access the champion's skins
