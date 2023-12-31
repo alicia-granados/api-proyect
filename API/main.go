@@ -8,7 +8,15 @@ import (
 	"log"
 )
 
+type application struct {
+	DB db.DatabaseRepo
+}
+
 func main() {
+
+	app := application{
+		DB: &db.RealDBRepo{},
+	}
 
 	// URL to fetch all champion data
 	apiURL := `https://ddragon.leagueoflegends.com/cdn/13.24.1/data/es_MX/champion.json`
@@ -24,8 +32,8 @@ func main() {
 		log.Fatalf("error decoding JSON: %v", err)
 	}
 
-	db.Connect()
-	defer db.Close()
+	app.DB.Connect()
+	defer app.DB.Close()
 
 	for _, championHandler := range data.GenericChampions {
 
@@ -47,16 +55,16 @@ func main() {
 
 		// Access the champion's
 		infCampeon := infoCampeon.Champion[championHandler.Id]
-		handlers.ProcessChampions(infCampeon)
+		handlers.ProcessChampions(app.DB, infCampeon)
 
 		// Access the champion's tags
 		tags := infoCampeon.Champion[championHandler.Id].Tags
-		handlers.ProcessTags(tags, championHandler.Id)
+		handlers.ProcessTags(app.DB, tags, championHandler.Id)
 
 		// Iterate over the champion's skins
 		// Access the champion's skins
 		skins := infoCampeon.Champion[championHandler.Id].Skins
-		handlers.ProcesSkins(skins, championHandler.Id)
+		handlers.ProcesSkins(app.DB, skins, championHandler.Id)
 
 	}
 

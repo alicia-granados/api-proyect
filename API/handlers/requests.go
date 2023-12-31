@@ -31,16 +31,16 @@ func APIRequest(apiURL string) ([]byte, error) {
 	return body, nil
 }
 
-func ProcessChampions(infCampeon Champion) {
+func ProcessChampions(dbRepo db.DatabaseRepo, infCampeon Champion) {
 
-	championID, err := db.GetChampionID(infCampeon.Id)
+	championID, err := dbRepo.GetChampionID(infCampeon.Id)
 	if err != nil {
 		log.Fatalf("Error getting the champion ID:%s", err)
 	}
 
 	if championID == 0 {
 		// Insert the champion and get its ID
-		_, err := db.InsertChampion(infCampeon.Name, infCampeon.Title, infCampeon.Lore)
+		_, err := dbRepo.InsertChampion(infCampeon.Name, infCampeon.Title, infCampeon.Lore)
 		if err != nil {
 			log.Fatalf("Error inserting the champion: %s", err)
 		}
@@ -48,17 +48,17 @@ func ProcessChampions(infCampeon Champion) {
 
 }
 
-func ProcessTags(tags []string, championName string) {
+func ProcessTags(dbRepo db.DatabaseRepo, tags []string, championName string) {
 
 	// Iterate over the champion's tags
 	for _, tag := range tags {
 
-		championID, err := db.GetChampionID(championName)
+		championID, err := dbRepo.GetChampionID(championName)
 		if err != nil {
 			log.Fatalf("Error getting the champion ID:%s", err)
 			continue
 		}
-		err = db.InsertTag(championID, tag)
+		err = dbRepo.InsertTag(championID, tag)
 		if err != nil {
 			log.Fatalf("Error inserting the tag: %s", err)
 		}
@@ -67,12 +67,12 @@ func ProcessTags(tags []string, championName string) {
 
 }
 
-func ProcesSkins(skins []Skins, championName string) {
+func ProcesSkins(dbRepo db.DatabaseRepo, skins []Skins, championName string) {
 
 	for _, skin := range skins {
 
 		// Check if the skin already exists in the Skins table
-		skinID, err := db.GetSkinID(skin.Id_Num)
+		skinID, err := dbRepo.GetSkinID(skin.Id_Num)
 		if err != nil {
 			log.Fatalf("Error getting the skin ID:%s", err)
 			continue
@@ -80,12 +80,12 @@ func ProcesSkins(skins []Skins, championName string) {
 
 		// If the skin doesn't exist, insert it and get its ID
 		if skinID == 0 {
-			championID, err := db.GetChampionID(championName)
+			championID, err := dbRepo.GetChampionID(championName)
 			if err != nil {
 				log.Fatalf("Error getting the champion ID:%s", err)
 				continue
 			}
-			err = db.InsertSkins(skin.Id_Num, skin.Num, championID, skin.Name)
+			err = dbRepo.InsertSkins(skin.Id_Num, skin.Num, championID, skin.Name)
 			if err != nil {
 				log.Fatalf("Error inserting the skin: %s", err)
 				continue

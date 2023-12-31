@@ -8,11 +8,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Holds the database connection
-var db *sql.DB
+type RealDBRepo struct {
+	DB *sql.DB
+}
 
 // Establishes a database connection
-func Connect() {
+func (r *RealDBRepo) Connect() {
 	dsn := DSN()
 	conection, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -20,26 +21,26 @@ func Connect() {
 	}
 
 	fmt.Println("Successful connection")
-	db = conection
-	Ping()
+	r.DB = conection
+	r.DB.Ping()
 }
 
 // Closes the database connection
-func Close() {
-	db.Close()
+func (r *RealDBRepo) Close() {
+	r.DB.Close()
 }
 
 // Verifies the database connection
-func Ping() {
-	if err := db.Ping(); err != nil {
+func (r *RealDBRepo) Ping() {
+	if err := r.DB.Ping(); err != nil {
 		log.Fatal(err)
 	}
 }
 
 // check if a table exists or not
-func ExistTable(tableName string) bool {
+func (r *RealDBRepo) ExistTable(tableName string) bool {
 	sql := fmt.Sprintf("SHOW TABLES LIKE '%s' ", tableName)
-	rows, err := Query(sql)
+	rows, err := r.DB.Query(sql)
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}
@@ -49,8 +50,8 @@ func ExistTable(tableName string) bool {
 
 // NOTE: db.Query or db.Exec can now be used without db.
 // Exec polymorphism
-func Exec(query string, args ...interface{}) (sql.Result, error) {
-	result, err := db.Exec(query, args...)
+func (r *RealDBRepo) Exec(query string, args ...interface{}) (sql.Result, error) {
+	result, err := r.DB.Exec(query, args...)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -58,8 +59,8 @@ func Exec(query string, args ...interface{}) (sql.Result, error) {
 }
 
 // Query polymorphism
-func Query(query string, args ...interface{}) (*sql.Rows, error) {
-	rows, err := db.Query(query, args...)
+func (r *RealDBRepo) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	rows, err := r.DB.Query(query, args...)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -67,7 +68,7 @@ func Query(query string, args ...interface{}) (*sql.Rows, error) {
 }
 
 // InsertChampion inserts a champion into the database and returns its ID
-func InsertChampion(name, title, lore string) (int64, error) {
+func (r *RealDBRepo) InsertChampion(name, title, lore string) (int64, error) {
 	// The database connection must be established before calling this function
 	// You can handle the connection according to your needs
 
@@ -75,7 +76,7 @@ func InsertChampion(name, title, lore string) (int64, error) {
 	query := "INSERT INTO Champion (Name, Title, Lore) VALUES (?, ?, ?)"
 
 	// Execute the query and get the automatically generated ID
-	result, err := Exec(query, name, title, lore)
+	result, err := r.DB.Exec(query, name, title, lore)
 	if err != nil {
 		log.Fatalf("Error inserting champion into the database: %v", err)
 		return 0, err
@@ -92,9 +93,9 @@ func InsertChampion(name, title, lore string) (int64, error) {
 }
 
 // GetTagID gets the ID of an existing tag or returns 0 if it doesn't exist.
-func GetTagID(tag string) (int, error) {
+func (r *RealDBRepo) GetTagID(tag string) (int, error) {
 	var tagID int
-	err := db.QueryRow("SELECT Id FROM Tags WHERE Name = ?", tag).Scan(&tagID)
+	err := r.DB.QueryRow("SELECT Id FROM Tags WHERE Name = ?", tag).Scan(&tagID)
 	if err == sql.ErrNoRows {
 		return 0, nil // Tag not found
 	} else if err != nil {
@@ -104,9 +105,9 @@ func GetTagID(tag string) (int, error) {
 }
 
 // GetTagID gets the ID of an existing tag or returns 0 if it doesn't exist.
-func GetChampionID(champion string) (int, error) {
+func (r *RealDBRepo) GetChampionID(champion string) (int, error) {
 	var championID int
-	err := db.QueryRow("SELECT Id FROM Champion WHERE Name = ?", champion).Scan(&championID)
+	err := r.DB.QueryRow("SELECT Id FROM Champion WHERE Name = ?", champion).Scan(&championID)
 	if err == sql.ErrNoRows {
 		return 0, nil // Tag not found
 	} else if err != nil {
@@ -116,19 +117,19 @@ func GetChampionID(champion string) (int, error) {
 }
 
 // InsertTag inserts a new tag and returns its ID.
-func InsertTag(championID int, tag string) error {
-	_, err := Exec("INSERT INTO Tags (Id_Champion, Name) VALUES (?, ?)", championID, tag)
+func (r *RealDBRepo) InsertTag(championID int, tag string) error {
+	_, err := r.DB.Exec("INSERT INTO Tags (Id_Champion, Name) VALUES (?, ?)", championID, tag)
 	return err
 }
 
 // GetSkinID gets the ID of an existing tag or returns 0 if it doesn't exist.
-func GetSkinID(Id_Num string) (int64, error) {
+func (r *RealDBRepo) GetSkinID(Id_Num string) (int64, error) {
 
 	// Example SQL statement for insertion into the Champion table
 	query := "SELECT Id FROM Skins WHERE Id_Num = ?"
 
 	// Execute the query and get the automatically generated ID
-	result, err := Exec(query, Id_Num)
+	result, err := r.DB.Exec(query, Id_Num)
 	if err != nil {
 		log.Fatalf("Error inserting champion into the database: %v", err)
 		return 0, err
@@ -146,7 +147,7 @@ func GetSkinID(Id_Num string) (int64, error) {
 }
 
 // InsertTag inserts a new tag and returns its ID.
-func InsertSkins(Id_Num string, num, championID int, name string) error {
-	_, err := Exec("INSERT INTO Skins (Id_Num, Num, Id_Champion, Name) VALUES (?,?, ?,?)", Id_Num, num, championID, name)
+func (r *RealDBRepo) InsertSkins(Id_Num string, num, championID int, name string) error {
+	_, err := r.DB.Exec("INSERT INTO Skins (Id_Num, Num, Id_Champion, Name) VALUES (?,?, ?,?)", Id_Num, num, championID, name)
 	return err
 }
