@@ -125,24 +125,14 @@ func (r *RealDBRepo) InsertTag(championID int, tag string) error {
 // GetSkinID gets the ID of an existing tag or returns 0 if it doesn't exist.
 func (r *RealDBRepo) GetSkinID(Id_Num string) (int64, error) {
 
-	// Example SQL statement for insertion into the Champion table
-	query := "SELECT Id FROM Skins WHERE Id_Num = ?"
-
-	// Execute the query and get the automatically generated ID
-	result, err := r.DB.Exec(query, Id_Num)
-	if err != nil {
-		log.Fatalf("Error inserting champion into the database: %v", err)
-		return 0, err
+	var skinID int64
+	err := r.DB.QueryRow("SELECT Id FROM Skins WHERE Id_Num = ?", Id_Num).Scan(&skinID)
+	if err == sql.ErrNoRows {
+		return 0, nil // Tag not found
+	} else if err != nil {
+		return 0, err // Tag not found
 	}
-
-	// Get the ID of the newly inserted champion
-	championID, err := result.LastInsertId()
-	if err != nil {
-		log.Fatalf("Error getting the ID of the inserted champion: %v", err)
-		return 0, err
-	}
-
-	return championID, nil
+	return skinID, nil
 
 }
 
