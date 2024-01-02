@@ -4,7 +4,6 @@ import (
 	"API/db"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -31,61 +30,59 @@ func APIRequest(apiURL string) ([]byte, error) {
 	return body, nil
 }
 
-func ProcessChampions(dbRepo db.DatabaseRepo, infCampeon Champion) {
+func ProcessChampions(dbRepo db.DatabaseRepo, infCampeon Champion) error {
 	championID, err := dbRepo.GetChampionID(infCampeon.Name)
 	if err != nil {
-		log.Fatalf("Error getting the champion ID:%s", err)
+		return fmt.Errorf("error getting the champion ID:%v", err)
 	}
 	if championID == 0 {
 		// Insert the champion and get its ID
 		_, err := dbRepo.InsertChampion(infCampeon.Name, infCampeon.Title, infCampeon.Lore)
 		if err != nil {
-			log.Fatalf("Error inserting the champion: %s", err)
+			return fmt.Errorf("error inserting the champion: %v", err)
 		}
 	}
+	return nil
 
 }
 
-func ProcessTags(dbRepo db.DatabaseRepo, tags []string, championName string) {
+func ProcessTags(dbRepo db.DatabaseRepo, tags []string, championName string) error {
 
 	// Iterate over the champion's tags
 	for _, tag := range tags {
 
 		championID, err := dbRepo.GetChampionID(championName)
 		if err != nil {
-			log.Fatalf("Error getting the champion ID:%s", err)
-			continue
+			return fmt.Errorf("error getting the champion ID:%v", err)
 		}
 		err = dbRepo.InsertTag(championID, tag)
 		if err != nil {
-			log.Fatalf("Error inserting the tag: %s", err)
+			return fmt.Errorf("error inserting the tag: %v", err)
 		}
 
 	}
-
+	return nil
 }
 
-func ProcesSkins(dbRepo db.DatabaseRepo, skins []Skins, championName string) {
+func ProcesSkins(dbRepo db.DatabaseRepo, skins []Skins, championName string) error {
 
 	for _, skin := range skins {
 		// Check if the skin already exists in the Skins table
 		skinID, err := dbRepo.GetSkinID(skin.Id_Num)
 		if err != nil {
-			log.Fatalf("Error getting the skin ID:%s", err)
-			continue
+			return fmt.Errorf("error getting the skin ID:%v", err)
 		}
 		// If the skin doesn't exist, insert it and get its ID
 		if skinID == 0 {
 			championID, err := dbRepo.GetChampionID(championName)
 			if err != nil {
-				log.Fatalf("Error getting the champion ID:%s", err)
-				continue
+				return fmt.Errorf("error getting the champion ID:%v", err)
 			}
 			err = dbRepo.InsertSkins(skin.Id_Num, skin.Num, championID, skin.Name)
 			if err != nil {
-				log.Fatalf("Error inserting the skin: %s", err)
-				continue
+				return fmt.Errorf("error inserting the skin: %v", err)
 			}
 		}
 	}
+	return nil
 }
