@@ -48,25 +48,6 @@ func (r *RealDBRepo) ExistTable(tableName string) bool {
 	return rows.Next()
 }
 
-// NOTE: db.Query or db.Exec can now be used without db.
-// Exec polymorphism
-func (r *RealDBRepo) Exec(query string, args ...interface{}) (sql.Result, error) {
-	result, err := r.DB.Exec(query, args...)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return result, err
-}
-
-// Query polymorphism
-func (r *RealDBRepo) Query(query string, args ...interface{}) (*sql.Rows, error) {
-	rows, err := r.DB.Query(query, args...)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return rows, err
-}
-
 // InsertChampion inserts a champion into the database and returns its ID
 func (r *RealDBRepo) InsertChampion(name, title, lore string) (int64, error) {
 	// The database connection must be established before calling this function
