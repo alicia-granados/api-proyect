@@ -55,16 +55,28 @@ func main() {
 
 		// Access the champion's
 		infCampeon := infoCampeon.Champion[championHandler.Id]
-		handlers.ProcessChampions(app.DB, infCampeon)
+		err = handlers.ProcessChampions(app.DB, infCampeon)
+		if err != nil {
+			fmt.Println("Error proccess champion:", err)
+			return
+		}
 
 		// Access the champion's tags
 		tags := infoCampeon.Champion[championHandler.Id].Tags
-		handlers.ProcessTags(app.DB, tags, infCampeon.Name)
+		err = handlers.ProcessTags(app.DB, tags, infCampeon.Name)
+		if err != nil {
+			fmt.Println("Error proccess tags:", err)
+			return
+		}
 
 		// Iterate over the champion's skins
 		// Access the champion's skins
 		skins := infoCampeon.Champion[championHandler.Id].Skins
-		handlers.ProcesSkins(app.DB, skins, championHandler.Id)
+		err = handlers.ProcesSkins(app.DB, skins, championHandler.Id)
+		if err != nil {
+			fmt.Println("Error proccess skins:", err)
+			return
+		}
 
 	}
 
