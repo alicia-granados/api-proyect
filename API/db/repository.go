@@ -1,13 +1,9 @@
 package db
 
-import "database/sql"
-
 type DatabaseRepo interface {
 	Connect()
 	Close()
 	Ping()
-	Exec(query string, args ...interface{}) (sql.Result, error)
-	Query(query string, args ...interface{}) (*sql.Rows, error)
 	InsertChampion(name, title, lore string) (int64, error)
 	GetTagID(tag string) (int, error)
 	GetChampionID(champion string) (int, error)
