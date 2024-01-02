@@ -65,11 +65,23 @@ func (m *TestDBRepo) InsertTag(championID int, tag string) error {
 }
 
 func (m *TestDBRepo) GetSkinID(Id_Num string) (int64, error) {
+	if Id_Num == "Wrong-fake-id" {
+		return 0, errors.New("there is an unexpected error")
+	}
 
+	if Id_Num == "Non-existant-fake-skin" {
+		return 0, nil
+	}
+	if Id_Num == "Real-skin" {
+		return 1, nil
+	}
 	return 1, nil
 
 }
 
 func (m *TestDBRepo) InsertSkins(Id_Num string, num, championID int, name string) error {
+	if championID == 1 && Id_Num == "Non-existant-fake-skin" && name == "Repeated-skin" {
+		return errors.New("repeated skin")
+	}
 	return nil
 }
