@@ -10,7 +10,6 @@ func (m *TestDBRepo) Connect() {
 }
 
 func (m *TestDBRepo) Close() {
-	// Implementación de Close
 }
 
 func (m *TestDBRepo) Ping() {
@@ -27,10 +26,19 @@ func (m *TestDBRepo) InsertChampion(name, title, lore string) (int64, error) {
 	if name == "Rigth-fake-name" {
 		return 0, nil
 	}
+	if name == "Real-name" {
+		return 1, nil
+	}
 	return 1, nil
 }
 
 func (m *TestDBRepo) GetTagID(tag string) (int, error) {
+	if tag == "Non-existant-fake-tag" {
+		return 0, errors.New("error no exits tag")
+	}
+	if tag == "Rigth-fake-tag" {
+		return 0, nil
+	}
 	return 1, nil // ID of the found tag
 }
 
@@ -41,11 +49,19 @@ func (m *TestDBRepo) GetChampionID(champion string) (int, error) {
 	if champion == "Non-existant-fake-name" || champion == "Rigth-fake-name" {
 		return 0, nil
 	}
+	if champion == "Real-name" {
+		return 1, nil
+	}
 	return 1, nil
+
 }
 
 func (m *TestDBRepo) InsertTag(championID int, tag string) error {
+	if championID == 1 && tag == "tag1" {
+		return errors.New("repeated tag")
+	}
 	return nil
+
 }
 
 func (m *TestDBRepo) GetSkinID(Id_Num string) (int64, error) {

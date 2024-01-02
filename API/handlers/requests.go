@@ -57,7 +57,7 @@ func ProcessTags(dbRepo db.DatabaseRepo, tags []string, championName string) err
 		}
 		err = dbRepo.InsertTag(championID, tag)
 		if err != nil {
-			return fmt.Errorf("error inserting the tag: %v", err)
+			return fmt.Errorf("error inserting the tag:%v", err)
 		}
 
 	}
