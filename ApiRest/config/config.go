@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -66,20 +65,20 @@ func LoadEnvironment() (*AppConfig, error) {
 	return config, nil
 }
 
-func DSNDatabase() string {
+func DSNDatabase() (string, error) {
 	config, err := LoadEnvironment()
 	if err != nil {
-		log.Fatalln("incomplete configuration:", err.Error())
+		return "", fmt.Errorf("error loading environment configuration: %w", err)
 	}
 
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName), nil
 }
 
-func DSNServer() string {
+func DSNServer() (string, error) {
 	config, err := LoadEnvironment()
 	if err != nil {
-		log.Fatalln("incomplete configuration:", err.Error())
+		return "", fmt.Errorf("error loading environment configuration: %w", err)
 	}
 
-	return fmt.Sprintf("%s:%s", config.ServerHost, config.ServerPort)
+	return fmt.Sprintf("%s:%s", config.ServerHost, config.ServerPort), nil
 }
