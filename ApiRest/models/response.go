@@ -48,26 +48,37 @@ func SendData(rw http.ResponseWriter, data interface{}) {
 }
 
 // errors in listing, deleting or obtaining data //method to respond to an error
-func (resp *Response) NotFound() {
+func (resp *Response) NotFound(message string) {
 	resp.Status = http.StatusNotFound
-	resp.Message = "Resource no Found"
+	resp.Message = message
+	resp.Send()
 }
 
 // respond error to client
-func SendNotFound(rw http.ResponseWriter) {
+func SendNotFound(rw http.ResponseWriter, message string) {
 	response := CreateDefaultResponse(rw)
-	response.NotFound()
+	response.NotFound(message)
 	response.Send()
 }
 
 // errors entering or updating
-func (resp *Response) UnprocessableEntity() {
+func (resp *Response) UnprocessableEntity(message string) {
 	resp.Status = http.StatusUnprocessableEntity
-	resp.Message = "UnprocessableEntity no Found"
+	resp.Data = "UnprocessableEntity no Found"
+	resp.Message = message
+	resp.Send()
 }
 
-func SendUnprocessableEntity(rw http.ResponseWriter) {
+func SendUnprocessableEntity(rw http.ResponseWriter, message string) {
 	response := CreateDefaultResponse(rw)
-	response.UnprocessableEntity()
+	response.UnprocessableEntity(message)
+	response.Send()
+}
+
+func SendInternalServerError(rw http.ResponseWriter, message string) {
+	response := CreateDefaultResponse(rw)
+	response.Status = http.StatusInternalServerError
+	response.Message = message
+	response.Data = "Unexpected error occurred"
 	response.Send()
 }
