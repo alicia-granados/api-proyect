@@ -19,6 +19,9 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 		mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			handlers.AllChampions(databaseRepo, w, r)
 		})
+		mux.Post("/", func(w http.ResponseWriter, r *http.Request) {
+			handlers.CreateChampion(databaseRepo, w, r)
+		})
 	})
 
 	return mux
