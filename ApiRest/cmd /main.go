@@ -18,12 +18,12 @@ func main() {
 	defer databaseRepo.Close()
 
 	dnsServer, err := config.DSNServer()
-	fmt.Printf("listen server: %s", dnsServer)
+	fmt.Printf("listen server: %s \n", dnsServer)
 	if err != nil {
 		log.Fatal("Error configuring server:", err)
 	}
 
-	err = http.ListenAndServe(dnsServer, routes.Routes())
+	err = http.ListenAndServe(dnsServer, routes.Routes(&databaseRepo))
 	if err != nil {
 		log.Fatal(err)
 	}

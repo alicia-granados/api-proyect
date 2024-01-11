@@ -1,13 +1,14 @@
 package routes
 
 import (
+	"ApiRest/db"
 	"ApiRest/handlers"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 )
 
-func Routes() http.Handler {
+func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 
 	mux := chi.NewRouter()
 
@@ -15,7 +16,9 @@ func Routes() http.Handler {
 
 	//protected routes
 	mux.Route("/api/champion", func(mux chi.Router) {
-		mux.Get("/", handlers.AllChampions)
+		mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			handlers.AllChampions(databaseRepo, w, r)
+		})
 	})
 
 	return mux
