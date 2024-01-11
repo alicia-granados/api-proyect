@@ -52,31 +52,6 @@ func (r *RealDBRepo) ExistTable(tableName string) bool {
 	return rows.Next()
 }
 
-// InsertChampion inserts a champion into the database and returns its ID
-func (r *RealDBRepo) InsertChampion(name, title, lore string) (int64, error) {
-	// The database connection must be established before calling this function
-	// You can handle the connection according to your needs
-
-	// Example SQL statement for insertion into the Champion table
-	query := "INSERT INTO Champion (Name, Title, Lore) VALUES (?, ?, ?)"
-
-	// Execute the query and get the automatically generated ID
-	result, err := r.DB.Exec(query, name, title, lore)
-	if err != nil {
-		log.Fatalf("Error inserting champion into the database: %v", err)
-		return 0, err
-	}
-
-	// Get the ID of the newly inserted champion
-	championID, err := result.LastInsertId()
-	if err != nil {
-		log.Fatalf("Error getting the ID of the inserted champion: %v", err)
-		return 0, err
-	}
-
-	return championID, nil
-}
-
 // GetTagID gets the ID of an existing tag or returns 0 if it doesn't exist.
 func (r *RealDBRepo) GetTagID(tag string) (int, error) {
 	var tagID int
@@ -87,18 +62,6 @@ func (r *RealDBRepo) GetTagID(tag string) (int, error) {
 		return 0, err // Other error
 	}
 	return tagID, nil // ID of the found tag
-}
-
-// GetTagID gets the ID of an existing tag or returns 0 if it doesn't exist.
-func (r *RealDBRepo) GetChampionID(champion string) (int, error) {
-	var championID int
-	err := r.DB.QueryRow("SELECT Id FROM Champion WHERE Name = ?", champion).Scan(&championID)
-	if err == sql.ErrNoRows {
-		return 0, nil // Tag not found
-	} else if err != nil {
-		return 0, err // Tag not found
-	}
-	return championID, nil
 }
 
 // InsertTag inserts a new tag and returns its ID.
