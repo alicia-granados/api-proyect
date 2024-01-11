@@ -1,7 +1,7 @@
 package entities
 
 type Champion struct {
-	Id    string
+	Id    int
 	Name  string
 	Title string
 	Skins []Skins
@@ -10,12 +10,15 @@ type Champion struct {
 }
 
 type Skins struct {
-	Id_Num string
-	Num    int32
-	Name   string
+	Id          int
+	Id_Num      string
+	Num         int32
+	Id_Champion int
+	Name        string
 }
 
 type Tags struct {
+	Id          int
 	Id_Champion int
 	Name        string
 }
