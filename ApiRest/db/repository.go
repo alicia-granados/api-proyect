@@ -4,7 +4,8 @@ type DatabaseRepo interface {
 	Connect()
 	Close()
 	Ping()
-	InsertChampion(name, title, lore string) (int64, error)
+	ListChampions() (Champion, error)
+	InsertChampion(name, title, lore string) error
 	GetTagID(tag string) (int, error)
 	GetChampionID(champion string) (int, error)
 	InsertTag(championID int, tag string) error
