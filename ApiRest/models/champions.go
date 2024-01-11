@@ -5,7 +5,7 @@ type Data struct {
 }
 
 type Champion struct {
-	Id    string  `json:"id"`
+	Id    int     `json:"id"`
 	Name  string  `json:"name"`
 	Title string  `json:"title"`
 	Skins []Skins `json:"skins"`
@@ -14,6 +14,7 @@ type Champion struct {
 }
 
 type Skins struct {
+	Id          int    `json:"id"`
 	Id_Num      string `json:"idNum"`
 	Num         int    `json:"num"`
 	Id_Champion int    `json:"idChampion"`
@@ -21,6 +22,7 @@ type Skins struct {
 }
 
 type Tags struct {
+	Id          int    `json:"id"`
 	Id_Champion int    `json:"idChampion"`
 	Name        string `json:"name"`
 }
