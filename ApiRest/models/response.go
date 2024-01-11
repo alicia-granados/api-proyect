@@ -16,8 +16,8 @@ type Response struct {
 
 const contentTypeJSON = "application/json"
 
-func CreateDefaultResponse(rw http.ResponseWriter) Response {
-	return Response{
+func CreateDefaultResponse(rw http.ResponseWriter) *Response {
+	return &Response{
 		Status:      http.StatusOK,
 		respWrite:   rw,
 		contentType: contentTypeJSON,
@@ -26,9 +26,12 @@ func CreateDefaultResponse(rw http.ResponseWriter) Response {
 
 // respond to the client
 func (resp *Response) Send() {
-	// modify the header
-	resp.respWrite.Header().Set("Content-Type", resp.contentType)
-	resp.respWrite.WriteHeader(resp.Status)
+	// Check if the header has been written
+	if resp.respWrite.Header().Get("Content-Type") == "" {
+		// modify the header
+		resp.respWrite.Header().Set("Content-Type", resp.contentType)
+		resp.respWrite.WriteHeader(resp.Status)
+	}
 
 	// Handle JSON encoding errors
 	err := json.NewEncoder(resp.respWrite).Encode(resp.Data)
@@ -45,15 +48,15 @@ func SendData(rw http.ResponseWriter, data interface{}) {
 }
 
 // errors in listing, deleting or obtaining data //method to respond to an error
-func (resp *Response) NoFound() {
+func (resp *Response) NotFound() {
 	resp.Status = http.StatusNotFound
 	resp.Message = "Resource no Found"
 }
 
 // respond error to client
-func SendNoFound(rw http.ResponseWriter) {
+func SendNotFound(rw http.ResponseWriter) {
 	response := CreateDefaultResponse(rw)
-	response.NoFound()
+	response.NotFound()
 	response.Send()
 }
 
