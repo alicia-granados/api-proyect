@@ -5,7 +5,6 @@ import (
 	"ApiRest/models"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -18,16 +17,14 @@ func AllChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.R
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// No se encontraron filas, devolver 404 Not Found
-			models.SendNotFound(rw, "no champions were found.")
+			models.HandleError(rw, http.StatusNotFound, "no champions were found", nil)
 		} else {
 			// Otro tipo de error, devolver 500 Internal Server Error o manejar según el caso
-			models.SendInternalServerError(rw, "an unexpected error occurred while retrieving champions.")
-			fmt.Println("Error:", err)
+			models.HandleError(rw, http.StatusInternalServerError, "an unexpected error occurred while retrieving champions", err)
 		}
 		return
 	}
-
-	models.SendData(rw, champions)
+	models.SendData(rw, champions, "info champions", http.StatusOK)
 }
 
 func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
@@ -36,16 +33,16 @@ func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.
 
 	championID, err := strconv.Atoi(id)
 	if err != nil {
-		models.SendUnprocessableEntity(rw, "Invalid champion ID")
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Invalid champion ID", err)
 		return
 	}
 
 	champion, err := databaseRepo.GetChampionId(championID)
 	if err != nil {
-		models.SendNotFound(rw, "Champion not found")
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
 		return
 	}
-	models.SendData(rw, champion)
+	models.SendData(rw, champion, "get list champion by id", http.StatusOK)
 }
 
 func CreateChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
@@ -55,16 +52,16 @@ func CreateChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http
 
 	// Decode the JSON of the request body
 	if err := decoder.Decode(&champion); err != nil {
-		models.SendUnprocessableEntity(rw, "Error decoding JSON")
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error decoding JSON", err)
 		return
 	}
 	// Database insertion logic
 	if err := databaseRepo.InsertChampion(champion.Name, champion.Title, champion.Lore); err != nil {
-		models.SendUnprocessableEntity(rw, "Error inserting champion into the database")
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error inserting champion into the database", err)
 		return
 	}
 	// Reply with a message
-	models.SendData(rw, champion)
+	models.SendData(rw, champion, "Champion created", http.StatusOK)
 
 }
 
@@ -73,7 +70,18 @@ func PutChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Re
 	id := chi.URLParam(r, "id")
 	championID, err := strconv.Atoi(id)
 	if err != nil {
-		models.SendUnprocessableEntity(rw, "Invalid champion ID")
+		models.HandleError(rw, http.StatusNotFound, "Invalid champion ID", err)
+		return
+	}
+
+	existsChampion, err := databaseRepo.ExistsID("Champion", championID)
+	if err != nil {
+		models.HandleError(rw, http.StatusInternalServerError, "Error checking champion existence", err)
+		return
+	}
+
+	if !existsChampion {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
 		return
 	}
 
@@ -82,15 +90,42 @@ func PutChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Re
 
 	// Decode the JSON of the request body
 	if err := decoder.Decode(&champion); err != nil {
-		models.SendUnprocessableEntity(rw, "Error decoding JSON")
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error decoding JSON", err)
 		return
 	}
 	// Database updated logic
 	if err := databaseRepo.UpdateChampion(championID, champion); err != nil {
-		models.SendUnprocessableEntity(rw, "Error updating champion into the database")
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error updating champion into the database", err)
+		return
+	}
+	models.SendData(rw, champion, "Updated champion", http.StatusOK)
+
+}
+
+func DeleteChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+	championID, err := strconv.Atoi(id)
+	if err != nil {
+		models.HandleError(rw, http.StatusNotFound, "Invalid champion ID", err)
+
+		return
+	}
+	existsChampion, err := databaseRepo.ExistsID("Champion", championID)
+	if err != nil {
+		models.HandleError(rw, http.StatusInternalServerError, "Error checking champion existence", err)
 		return
 	}
 
-	models.SendData(rw, champion)
+	if !existsChampion {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
+		return
+	}
+
+	if err := databaseRepo.DeleteChampion(championID); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error deleting champion into the database", err)
+		return
+	}
+	models.SendData(rw, championID, "deleted champion", http.StatusOK)
 
 }
