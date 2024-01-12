@@ -121,3 +121,37 @@ func DeleteChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http
 	models.SendData(rw, championID, "deleted champion", http.StatusOK)
 
 }
+
+func GetChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+	champions, err := databaseRepo.GetChampions()
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// No se encontraron filas, devolver 404 Not Found
+			models.HandleError(rw, http.StatusNotFound, "no champions were found", nil)
+		} else {
+			// Otro tipo de error, devolver 500 Internal Server Error o manejar según el caso
+			models.HandleError(rw, http.StatusInternalServerError, "an unexpected error occurred while retrieving champions", err)
+		}
+		return
+	}
+	models.SendData(rw, champions, "get champions", http.StatusOK)
+}
+
+func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+
+	championID, err := strconv.Atoi(id)
+	if err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Invalid champion ID", err)
+		return
+	}
+
+	champion, err := databaseRepo.GetChampionId(championID)
+	if err != nil {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
+		return
+	}
+	models.SendData(rw, champion, "get champion by id", http.StatusOK)
+}

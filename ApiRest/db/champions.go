@@ -97,3 +97,62 @@ func (r *RealDBRepo) DeleteChampion(championID int) error {
 	_, err := r.DB.Exec(sql, championID)
 	return err
 }
+
+func (r *RealDBRepo) GetChampions() (Champion, error) {
+	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore FROM Champion"
+
+	champions := Champion{}
+	rows, err := r.DB.Query(sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		champion := models.Champion{}
+		err := rows.Scan(&champion.Id, &champion.Name, &champion.Title, &champion.Lore)
+		if err != nil {
+			return nil, err
+		}
+
+		// AAdd the data object to the champion slice
+		champions = append(champions, champion)
+	}
+
+	// Check for errors after exiting the loop
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return champions, nil
+}
+
+func (r *RealDBRepo) GetChampionId(championId int) (Champion, error) {
+	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore FROM Champion WHERE Champion.Id = ? "
+
+	champions := Champion{}
+	rows, err := r.DB.Query(sql, championId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close() // Make sure to close the rows at the end
+
+	for rows.Next() {
+		champion := models.Champion{}
+
+		err := rows.Scan(&champion.Id, &champion.Name, &champion.Title, &champion.Lore)
+
+		if err != nil {
+			return nil, err
+		}
+
+		champions = append(champions, champion)
+
+	}
+
+	// Check for errors after exiting the loop
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return champions, nil
+}
