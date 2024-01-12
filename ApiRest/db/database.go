@@ -52,6 +52,22 @@ func (r *RealDBRepo) ExistTable(tableName string) bool {
 	return rows.Next()
 }
 
+// ExistsID checks if a specific ID exists in the table
+func (r *RealDBRepo) ExistsID(table string, id int) (bool, error) {
+
+	// Execute the SQL query
+	var count int
+
+	// Execute the SQL query and get the count
+	err := r.DB.QueryRow(fmt.Sprintf("SELECT COUNT(*)  FROM %s WHERE Id = ?", table), id).Scan(&count)
+	// Execute the SQL query
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
 // GetTagID gets the ID of an existing tag or returns 0 if it doesn't exist.
 func (r *RealDBRepo) GetTagID(tag string) (int, error) {
 	var tagID int
