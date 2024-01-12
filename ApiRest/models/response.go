@@ -64,7 +64,6 @@ func SendNotFound(rw http.ResponseWriter, message string) {
 // errors entering or updating
 func (resp *Response) UnprocessableEntity(message string) {
 	resp.Status = http.StatusUnprocessableEntity
-	resp.Data = "UnprocessableEntity no Found"
 	resp.Message = message
 	resp.Send()
 }
@@ -79,6 +78,5 @@ func SendInternalServerError(rw http.ResponseWriter, message string) {
 	response := CreateDefaultResponse(rw)
 	response.Status = http.StatusInternalServerError
 	response.Message = message
-	response.Data = "Unexpected error occurred"
 	response.Send()
 }

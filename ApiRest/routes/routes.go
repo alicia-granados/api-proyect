@@ -10,19 +10,22 @@ import (
 
 func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 
-	mux := chi.NewRouter()
+	router := chi.NewRouter()
 
 	//mux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("./html/"))))
 
 	//protected routes
-	mux.Route("/api/champion", func(mux chi.Router) {
-		mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	router.Route("/api/champion", func(router chi.Router) {
+		router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			handlers.AllChampions(databaseRepo, w, r)
 		})
-		mux.Post("/", func(w http.ResponseWriter, r *http.Request) {
+		router.Get("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+			handlers.GetChampionId(databaseRepo, w, r)
+		})
+		router.Post("/", func(w http.ResponseWriter, r *http.Request) {
 			handlers.CreateChampion(databaseRepo, w, r)
 		})
 	})
 
-	return mux
+	return router
 }

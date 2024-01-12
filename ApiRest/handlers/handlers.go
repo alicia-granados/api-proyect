@@ -7,6 +7,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func AllChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
@@ -25,6 +28,24 @@ func AllChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.R
 	}
 
 	models.SendData(rw, champions)
+}
+
+func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+
+	championID, err := strconv.Atoi(id)
+	if err != nil {
+		models.SendUnprocessableEntity(rw, "Invalid champion ID")
+		return
+	}
+
+	champion, err := databaseRepo.GetChampionId(championID)
+	if err != nil {
+		models.SendNotFound(rw, "Champion not found")
+		return
+	}
+	models.SendData(rw, champion)
 }
 
 func CreateChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
