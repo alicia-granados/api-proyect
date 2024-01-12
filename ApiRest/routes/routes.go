@@ -25,6 +25,10 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 		router.Post("/", func(w http.ResponseWriter, r *http.Request) {
 			handlers.CreateChampion(databaseRepo, w, r)
 		})
+
+		router.Put("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+			handlers.PutChampion(databaseRepo, w, r)
+		})
 	})
 
 	return router
