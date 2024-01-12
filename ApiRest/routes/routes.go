@@ -29,6 +29,10 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 		router.Put("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
 			handlers.PutChampion(databaseRepo, w, r)
 		})
+
+		router.Delete("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+			handlers.DeleteChampion(databaseRepo, w, r)
+		})
 	})
 
 	return router
