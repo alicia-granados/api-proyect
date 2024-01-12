@@ -2,10 +2,11 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 )
 
+// Response represents the structure for API responses
 type Response struct {
 	Status      int         `json:"status"`
 	Data        interface{} `json:"data"`
@@ -16,6 +17,7 @@ type Response struct {
 
 const contentTypeJSON = "application/json"
 
+// CreateDefaultResponse creates a default response object with OK status
 func CreateDefaultResponse(rw http.ResponseWriter) *Response {
 	return &Response{
 		Status:      http.StatusOK,
@@ -24,59 +26,35 @@ func CreateDefaultResponse(rw http.ResponseWriter) *Response {
 	}
 }
 
-// respond to the client
+// HandleError handles errors centrally
+func HandleError(rw http.ResponseWriter, status int, message string, err error) {
+	log.Printf("Error: %v\n", err)
+	response := CreateDefaultResponse(rw)
+	response.Status = status
+	response.Message = message
+	response.Send()
+}
+
+// SendData responds with successful data
+func SendData(rw http.ResponseWriter, data interface{}, message string, status int) {
+	response := CreateDefaultResponse(rw)
+	response.Data = data
+	response.Message = message
+	response.Status = status
+	response.Send()
+}
+
+// Send responds to the client
 func (resp *Response) Send() {
 	// Check if the header has been written
 	if resp.respWrite.Header().Get("Content-Type") == "" {
-		// modify the header
+		// Modify the header
 		resp.respWrite.Header().Set("Content-Type", resp.contentType)
 		resp.respWrite.WriteHeader(resp.Status)
 	}
 
 	// Handle JSON encoding errors
-	err := json.NewEncoder(resp.respWrite).Encode(resp.Data)
-	if err != nil {
-		fmt.Println("Error encoding JSON:", err)
+	if err := json.NewEncoder(resp.respWrite).Encode(resp.Data); err != nil {
+		HandleError(resp.respWrite, http.StatusInternalServerError, "Error encoding JSON", err)
 	}
-}
-
-// changes to return the data to the client
-func SendData(rw http.ResponseWriter, data interface{}) {
-	response := CreateDefaultResponse(rw)
-	response.Data = data
-	response.Send()
-}
-
-// errors in listing, deleting or obtaining data //method to respond to an error
-func (resp *Response) NotFound(message string) {
-	resp.Status = http.StatusNotFound
-	resp.Message = message
-	resp.Send()
-}
-
-// respond error to client
-func SendNotFound(rw http.ResponseWriter, message string) {
-	response := CreateDefaultResponse(rw)
-	response.NotFound(message)
-	response.Send()
-}
-
-// errors entering or updating
-func (resp *Response) UnprocessableEntity(message string) {
-	resp.Status = http.StatusUnprocessableEntity
-	resp.Message = message
-	resp.Send()
-}
-
-func SendUnprocessableEntity(rw http.ResponseWriter, message string) {
-	response := CreateDefaultResponse(rw)
-	response.UnprocessableEntity(message)
-	response.Send()
-}
-
-func SendInternalServerError(rw http.ResponseWriter, message string) {
-	response := CreateDefaultResponse(rw)
-	response.Status = http.StatusInternalServerError
-	response.Message = message
-	response.Send()
 }
