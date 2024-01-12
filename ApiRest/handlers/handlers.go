@@ -67,3 +67,30 @@ func CreateChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http
 	models.SendData(rw, champion)
 
 }
+
+func PutChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+	championID, err := strconv.Atoi(id)
+	if err != nil {
+		models.SendUnprocessableEntity(rw, "Invalid champion ID")
+		return
+	}
+
+	champion := models.Champion{}
+	decoder := json.NewDecoder(r.Body)
+
+	// Decode the JSON of the request body
+	if err := decoder.Decode(&champion); err != nil {
+		models.SendUnprocessableEntity(rw, "Error decoding JSON")
+		return
+	}
+	// Database updated logic
+	if err := databaseRepo.UpdateChampion(championID, champion); err != nil {
+		models.SendUnprocessableEntity(rw, "Error updating champion into the database")
+		return
+	}
+
+	models.SendData(rw, champion)
+
+}
