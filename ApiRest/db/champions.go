@@ -83,3 +83,10 @@ func (r *RealDBRepo) GetChampionId(championId int) (Champion, error) {
 	}
 	return champions, nil
 }
+
+// UpdateChampion update a champion into the database and returns its ID
+func (r *RealDBRepo) UpdateChampion(championID int, Champion models.Champion) error {
+	sql := "UPDATE Champion SET  Name=?, Title= ? , Lore=? WHERE Id=?"
+	_, err := r.DB.Exec(sql, Champion.Name, Champion.Title, Champion.Lore, championID)
+	return err
+}
