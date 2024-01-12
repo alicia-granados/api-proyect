@@ -51,6 +51,7 @@ func (resp *Response) Send() {
 		// Modify the header
 		resp.respWrite.Header().Set("Content-Type", resp.contentType)
 		resp.respWrite.WriteHeader(resp.Status)
+		resp.respWrite.Write([]byte(resp.Message))
 	}
 
 	// Handle JSON encoding errors

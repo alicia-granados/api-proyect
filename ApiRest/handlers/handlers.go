@@ -74,11 +74,7 @@ func PutChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Re
 		return
 	}
 
-	existsChampion, err := databaseRepo.ExistsID("Champion", championID)
-	if err != nil {
-		models.HandleError(rw, http.StatusInternalServerError, "Error checking champion existence", err)
-		return
-	}
+	existsChampion := databaseRepo.ExistsID("Champion", championID)
 
 	if !existsChampion {
 		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
@@ -111,11 +107,7 @@ func DeleteChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http
 
 		return
 	}
-	existsChampion, err := databaseRepo.ExistsID("Champion", championID)
-	if err != nil {
-		models.HandleError(rw, http.StatusInternalServerError, "Error checking champion existence", err)
-		return
-	}
+	existsChampion := databaseRepo.ExistsID("Champion", championID)
 
 	if !existsChampion {
 		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
