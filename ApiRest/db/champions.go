@@ -4,13 +4,53 @@ import (
 	"ApiRest/models"
 )
 
-type Champion []models.Data
+type Champion []models.Champion
 
 func (r *RealDBRepo) ListChampions() (Champion, error) {
-	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore, Skins.Id, Skins.Id_Num,  Skins.Num,  Skins.Id_Champion,  Skins.Name,  Tags.Id, Tags.Id_Champion, Tags.Name  FROM Champion LEFT JOIN Skins ON Champion.Id = Skins.Id_Champion LEFT JOIN Tags ON Champion.Id = Tags.Id_Champion"
+	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore, Skins.Id, Skins.Id_Num, Skins.Num, Skins.Id_Champion, Skins.Name, Tags.Id, Tags.Id_Champion, Tags.Name FROM Champion LEFT JOIN Skins ON Champion.Id = Skins.Id_Champion LEFT JOIN Tags ON Champion.Id = Tags.Id_Champion"
 
 	champions := Champion{}
 	rows, err := r.DB.Query(sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		champion := models.Champion{}
+		skin := models.Skins{}
+		tag := models.Tags{}
+
+		err := rows.Scan(&champion.Id, &champion.Name, &champion.Title, &champion.Lore, &skin.Id, &skin.Id_Num, &skin.Num, &skin.Id_Champion, &skin.Name, &tag.Id, &tag.Id_Champion, &tag.Name)
+		if err != nil {
+			return nil, err
+		}
+
+		champion.Skins = []models.Skins{skin}
+		champion.Tags = []models.Tags{tag}
+		// AAdd the data object to the champion slice
+		champions = append(champions, champion)
+	}
+
+	// Check for errors after exiting the loop
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return champions, nil
+}
+
+// InsertChampion inserts a champion into the database and returns its ID
+func (r *RealDBRepo) InsertChampion(name, title, lore string) error {
+	_, err := r.DB.Exec("INSERT INTO Champion (Name, Title, Lore) VALUES (?, ?, ?)", name, title, lore)
+	return err
+}
+
+func (r *RealDBRepo) GetChampionId(championId int) (Champion, error) {
+	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore, Skins.Id, Skins.Id_Num,  Skins.Num,  Skins.Id_Champion,  Skins.Name,  Tags.Id, Tags.Id_Champion, Tags.Name  FROM Champion LEFT JOIN Skins ON Champion.Id = Skins.Id_Champion LEFT JOIN Tags ON Champion.Id = Tags.Id_Champion WHERE Champion.Id = ? "
+
+	champions := Champion{}
+	rows, err := r.DB.Query(sql, championId)
 	if err != nil {
 		return nil, err
 	}
@@ -33,10 +73,7 @@ func (r *RealDBRepo) ListChampions() (Champion, error) {
 		champion.Skins = append(champion.Skins, skin)
 		champion.Tags = append(champion.Tags, tag)
 
-		data := models.Data{
-			Champion: map[string]models.Champion{"Champion": champion},
-		}
-		champions = append(champions, data)
+		champions = append(champions, champion)
 
 	}
 
@@ -45,11 +82,4 @@ func (r *RealDBRepo) ListChampions() (Champion, error) {
 		return nil, err
 	}
 	return champions, nil
-
-}
-
-// InsertChampion inserts a champion into the database and returns its ID
-func (r *RealDBRepo) InsertChampion(name, title, lore string) error {
-	_, err := r.DB.Exec("INSERT INTO Champion (Name, Title, Lore) VALUES (?, ?, ?)", name, title, lore)
-	return err
 }
