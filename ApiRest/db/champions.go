@@ -6,7 +6,7 @@ import (
 
 type Champion []models.Champion
 
-func (r *RealDBRepo) ListChampions() (Champion, error) {
+func (r *RealDBRepo) AllInfoChampions() (Champion, error) {
 	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore, Skins.Id, Skins.Id_Num, Skins.Num, Skins.Id_Champion, Skins.Name, Tags.Id, Tags.Id_Champion, Tags.Name FROM Champion LEFT JOIN Skins ON Champion.Id = Skins.Id_Champion LEFT JOIN Tags ON Champion.Id = Tags.Id_Champion"
 
 	champions := Champion{}
@@ -46,7 +46,7 @@ func (r *RealDBRepo) InsertChampion(name, title, lore string) error {
 	return err
 }
 
-func (r *RealDBRepo) GetChampionId(championId int) (Champion, error) {
+func (r *RealDBRepo) GetInfoChampionId(championId int) (Champion, error) {
 	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore, Skins.Id, Skins.Id_Num,  Skins.Num,  Skins.Id_Champion,  Skins.Name,  Tags.Id, Tags.Id_Champion, Tags.Name  FROM Champion LEFT JOIN Skins ON Champion.Id = Skins.Id_Champion LEFT JOIN Tags ON Champion.Id = Tags.Id_Champion WHERE Champion.Id = ? "
 
 	champions := Champion{}

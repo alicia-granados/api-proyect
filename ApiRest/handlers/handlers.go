@@ -11,8 +11,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func AllChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
-	champions, err := databaseRepo.ListChampions()
+func AllInfoChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+	champions, err := databaseRepo.AllInfoChampions()
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -27,7 +27,7 @@ func AllChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.R
 	models.SendData(rw, champions, "info champions", http.StatusOK)
 }
 
-func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func GetInfoChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
@@ -37,7 +37,7 @@ func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.
 		return
 	}
 
-	champion, err := databaseRepo.GetChampionId(championID)
+	champion, err := databaseRepo.GetInfoChampionId(championID)
 	if err != nil {
 		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
 		return
