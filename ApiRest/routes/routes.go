@@ -70,6 +70,9 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 		router.Get("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
 			handlers.GetTagId(databaseRepo, w, r)
 		})
+		router.Post("/", func(w http.ResponseWriter, r *http.Request) {
+			handlers.CreateTag(databaseRepo, w, r)
+		})
 
 	})
 
