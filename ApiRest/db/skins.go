@@ -76,3 +76,9 @@ func (r *RealDBRepo) UpdateSkin(skinID int, Skin models.Skins) error {
 	_, err := r.DB.Exec(sql, Skin.IdNum, Skin.Num, Skin.IdChampion, Skin.Name, skinID)
 	return err
 }
+
+func (r *RealDBRepo) DeleteSkin(skinID int) error {
+	sql := "DELETE FROM Skins WHERE Id=?"
+	_, err := r.DB.Exec(sql, skinID)
+	return err
+}
