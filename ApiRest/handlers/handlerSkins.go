@@ -80,3 +80,42 @@ func CreateSkins(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Re
 	models.SendData(rw, skin, "Skin created", http.StatusOK)
 
 }
+
+func PutSkin(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+	skinID, err := strconv.Atoi(id)
+	if err != nil {
+		models.HandleError(rw, http.StatusNotFound, "Invalid champion ID", err)
+		return
+	}
+
+	skin := models.Skins{}
+	decoder := json.NewDecoder(r.Body)
+
+	// Decode the JSON of the request body
+	if err := decoder.Decode(&skin); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error decoding JSON", err)
+		return
+	}
+	existsChampion := databaseRepo.ExistsID("Champion", skin.IdChampion)
+	if !existsChampion {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
+		return
+	}
+
+	existsSkin := databaseRepo.ExistsID("Skins", skinID)
+
+	if !existsSkin {
+		models.HandleError(rw, http.StatusNotFound, "Skins not found", nil)
+		return
+	}
+
+	// Database updated logic
+	if err := databaseRepo.UpdateSkin(skinID, skin); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error updating skin into the database", err)
+		return
+	}
+	models.SendData(rw, skin, "Updated skin", http.StatusOK)
+
+}
