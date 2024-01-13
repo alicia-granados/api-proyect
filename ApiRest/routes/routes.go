@@ -74,6 +74,10 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 			handlers.CreateTag(databaseRepo, w, r)
 		})
 
+		router.Put("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+			handlers.PutTag(databaseRepo, w, r)
+		})
+
 	})
 
 	return router
