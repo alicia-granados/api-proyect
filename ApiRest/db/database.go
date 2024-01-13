@@ -85,9 +85,3 @@ func (r *RealDBRepo) InsertTag(championID int, tag string) error {
 	_, err := r.DB.Exec("INSERT INTO Tags (Id_Champion, Name) VALUES (?, ?)", championID, tag)
 	return err
 }
-
-// InsertTag inserts a new tag and returns its ID.
-func (r *RealDBRepo) InsertSkins(Id_Num string, num, championID int, name string) error {
-	_, err := r.DB.Exec("INSERT INTO Skins (Id_Num, Num, Id_Champion, Name) VALUES (?,?, ?,?)", Id_Num, num, championID, name)
-	return err
-}
