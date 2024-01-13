@@ -63,5 +63,15 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 
 	})
 
+	router.Route("/api/tags", func(router chi.Router) {
+		router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			handlers.GetTags(databaseRepo, w, r)
+		})
+		router.Get("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+			handlers.GetTagId(databaseRepo, w, r)
+		})
+
+	})
+
 	return router
 }
