@@ -4,6 +4,7 @@ import (
 	"ApiRest/db"
 	"ApiRest/models"
 	"database/sql"
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -49,4 +50,33 @@ func GetTagId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Reque
 		return
 	}
 	models.SendData(rw, tag, "get tag by id", http.StatusOK)
+}
+
+func CreateTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	tag := models.Tags{}
+	decoder := json.NewDecoder(r.Body)
+
+	// Decode the JSON of the request body
+	if err := decoder.Decode(&tag); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error decoding JSON", err)
+		return
+	}
+
+	//	verify if idchampion exists
+	existsChampion := databaseRepo.ExistsID("Champion", tag.IdChampion)
+
+	if !existsChampion {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
+		return
+	}
+
+	// Database insertion logic
+	if err := databaseRepo.InsertTag(tag.IdChampion, tag.Name); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error inserting Tags into the database", err)
+		return
+	}
+	// Reply with a message
+	models.SendData(rw, tag, "Tag created", http.StatusOK)
+
 }
