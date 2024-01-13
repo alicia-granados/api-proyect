@@ -86,20 +86,6 @@ func (r *RealDBRepo) InsertTag(championID int, tag string) error {
 	return err
 }
 
-// GetSkinID gets the ID of an existing tag or returns 0 if it doesn't exist.
-func (r *RealDBRepo) GetSkinID(Id_Num string) (int64, error) {
-
-	var skinID int64
-	err := r.DB.QueryRow("SELECT Id FROM Skins WHERE Id_Num = ?", Id_Num).Scan(&skinID)
-	if err == sql.ErrNoRows {
-		return 0, nil // Tag not found
-	} else if err != nil {
-		return 0, err // Tag not found
-	}
-	return skinID, nil
-
-}
-
 // InsertTag inserts a new tag and returns its ID.
 func (r *RealDBRepo) InsertSkins(Id_Num string, num, championID int, name string) error {
 	_, err := r.DB.Exec("INSERT INTO Skins (Id_Num, Num, Id_Champion, Name) VALUES (?,?, ?,?)", Id_Num, num, championID, name)
