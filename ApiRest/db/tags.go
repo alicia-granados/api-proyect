@@ -70,3 +70,9 @@ func (r *RealDBRepo) InsertTag(championID int, tag string) error {
 	_, err := r.DB.Exec("INSERT INTO Tags (Id_Champion, Name) VALUES (?, ?)", championID, tag)
 	return err
 }
+
+func (r *RealDBRepo) UpdateTag(tagID int, Tag models.Tags) error {
+	sql := "UPDATE Tags SET Id_Champion=?,  Name=? WHERE Id=?"
+	_, err := r.DB.Exec(sql, Tag.IdChampion, Tag.Name, tagID)
+	return err
+}
