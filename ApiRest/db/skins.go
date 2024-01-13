@@ -70,3 +70,9 @@ func (r *RealDBRepo) InsertSkin(Id_Num string, num, championID int, name string)
 	_, err := r.DB.Exec("INSERT INTO Skins (Id_Num, Num, Id_Champion, Name) VALUES (?,?, ?,?)", Id_Num, num, championID, name)
 	return err
 }
+
+func (r *RealDBRepo) UpdateSkin(skinID int, Skin models.Skins) error {
+	sql := "UPDATE Skins SET  Id_Num=?, Num= ? , Id_Champion=?,  Name=? WHERE Id=?"
+	_, err := r.DB.Exec(sql, Skin.IdNum, Skin.Num, Skin.IdChampion, Skin.Name, skinID)
+	return err
+}
