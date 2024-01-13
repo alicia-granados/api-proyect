@@ -49,6 +49,9 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 		router.Get("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
 			handlers.GetSkinsId(databaseRepo, w, r)
 		})
+		router.Post("/", func(w http.ResponseWriter, r *http.Request) {
+			handlers.CreateSkins(databaseRepo, w, r)
+		})
 
 	})
 
