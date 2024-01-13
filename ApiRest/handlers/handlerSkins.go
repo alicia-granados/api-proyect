@@ -4,6 +4,7 @@ import (
 	"ApiRest/db"
 	"ApiRest/models"
 	"database/sql"
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -36,10 +37,10 @@ func GetSkinsId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Req
 		return
 	}
 
-	existsChampion := databaseRepo.ExistsID("Skins", SkinID)
+	existsSkins := databaseRepo.ExistsID("Skins", SkinID)
 
-	if !existsChampion {
-		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
+	if !existsSkins {
+		models.HandleError(rw, http.StatusNotFound, "Skin not found", nil)
 		return
 	}
 
@@ -49,4 +50,33 @@ func GetSkinsId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Req
 		return
 	}
 	models.SendData(rw, skin, "get skin by id", http.StatusOK)
+}
+
+func CreateSkins(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	skin := models.Skins{}
+	decoder := json.NewDecoder(r.Body)
+
+	// Decode the JSON of the request body
+	if err := decoder.Decode(&skin); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error decoding JSON", err)
+		return
+	}
+
+	//	verify if idchampion exists
+	existsChampion := databaseRepo.ExistsID("Champion", skin.IdChampion)
+
+	if !existsChampion {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
+		return
+	}
+
+	// Database insertion logic
+	if err := databaseRepo.InsertSkin(skin.IdNum, skin.Num, skin.IdChampion, skin.Name); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error inserting skins into the database", err)
+		return
+	}
+	// Reply with a message
+	models.SendData(rw, skin, "Skin created", http.StatusOK)
+
 }
