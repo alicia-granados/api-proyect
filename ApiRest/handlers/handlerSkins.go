@@ -119,3 +119,27 @@ func PutSkin(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Reques
 	models.SendData(rw, skin, "Updated skin", http.StatusOK)
 
 }
+
+func DeleteSkin(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+	skinID, err := strconv.Atoi(id)
+	if err != nil {
+		models.HandleError(rw, http.StatusNotFound, "Invalid champion ID", err)
+
+		return
+	}
+	existsSkin := databaseRepo.ExistsID("Skins", skinID)
+
+	if !existsSkin {
+		models.HandleError(rw, http.StatusNotFound, "skin not found", nil)
+		return
+	}
+
+	if err := databaseRepo.DeleteSkin(skinID); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error deleting skin into the database", err)
+		return
+	}
+	models.SendData(rw, skinID, "deleted skin ", http.StatusOK)
+
+}
