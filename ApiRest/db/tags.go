@@ -64,3 +64,9 @@ func (r *RealDBRepo) GetTagId(TagsId int) (Tags, error) {
 	}
 	return Tagss, nil
 }
+
+// InsertTag inserts a new tag
+func (r *RealDBRepo) InsertTag(championID int, tag string) error {
+	_, err := r.DB.Exec("INSERT INTO Tags (Id_Champion, Name) VALUES (?, ?)", championID, tag)
+	return err
+}
