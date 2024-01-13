@@ -18,7 +18,7 @@ func (r *RealDBRepo) GetSkins() (Skins, error) {
 
 	for rows.Next() {
 		Skins := models.Skins{}
-		err := rows.Scan(&Skins.Id, &Skins.Id_Num, &Skins.Num, &Skins.Id_Champion, &Skins.Name)
+		err := rows.Scan(&Skins.Id, &Skins.IdNum, &Skins.Num, &Skins.IdChampion, &Skins.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -48,7 +48,7 @@ func (r *RealDBRepo) GetSkinId(SkinsId int) (Skins, error) {
 	for rows.Next() {
 		Skins := models.Skins{}
 
-		err := rows.Scan(&Skins.Id, &Skins.Id_Num, &Skins.Num, &Skins.Id_Champion, &Skins.Name)
+		err := rows.Scan(&Skins.Id, &Skins.IdNum, &Skins.Num, &Skins.IdChampion, &Skins.Name)
 
 		if err != nil {
 			return nil, err
@@ -63,4 +63,10 @@ func (r *RealDBRepo) GetSkinId(SkinsId int) (Skins, error) {
 		return nil, err
 	}
 	return Skinss, nil
+}
+
+// InsertSkin inserts a new tag and returns its ID.
+func (r *RealDBRepo) InsertSkin(Id_Num string, num, championID int, name string) error {
+	_, err := r.DB.Exec("INSERT INTO Skins (Id_Num, Num, Id_Champion, Name) VALUES (?,?, ?,?)", Id_Num, num, championID, name)
+	return err
 }
