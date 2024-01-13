@@ -21,7 +21,7 @@ func (r *RealDBRepo) AllInfoChampions() (Champion, error) {
 		skin := models.Skins{}
 		tag := models.Tags{}
 
-		err := rows.Scan(&champion.Id, &champion.Name, &champion.Title, &champion.Lore, &skin.Id, &skin.Id_Num, &skin.Num, &skin.Id_Champion, &skin.Name, &tag.Id, &tag.Id_Champion, &tag.Name)
+		err := rows.Scan(&champion.Id, &champion.Name, &champion.Title, &champion.Lore, &skin.Id, &skin.IdNum, &skin.Num, &skin.IdChampion, &skin.Name, &tag.Id, &tag.Id_Champion, &tag.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -61,7 +61,7 @@ func (r *RealDBRepo) GetInfoChampionId(championId int) (Champion, error) {
 		skin := models.Skins{}
 		tag := models.Tags{}
 
-		err := rows.Scan(&champion.Id, &champion.Name, &champion.Title, &champion.Lore, &skin.Id, &skin.Id_Num, &skin.Num, &skin.Id_Champion, &skin.Name, &tag.Id, &tag.Id_Champion, &tag.Name)
+		err := rows.Scan(&champion.Id, &champion.Name, &champion.Title, &champion.Lore, &skin.Id, &skin.IdNum, &skin.Num, &skin.IdChampion, &skin.Name, &tag.Id, &tag.Id_Champion, &tag.Name)
 
 		if err != nil {
 			return nil, err

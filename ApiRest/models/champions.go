@@ -14,11 +14,11 @@ type Champion struct {
 }
 
 type Skins struct {
-	Id          int    `json:"id"`
-	Id_Num      string `json:"idNum"`
-	Num         int    `json:"num"`
-	Id_Champion int    `json:"idChampion"`
-	Name        string `json:"name"`
+	Id         int    `json:"id"`
+	IdNum      string `json:"idNum"`
+	Num        int    `json:"num"`
+	IdChampion int    `json:"idChampion"`
+	Name       string `json:"name"`
 }
 
 type Tags struct {
