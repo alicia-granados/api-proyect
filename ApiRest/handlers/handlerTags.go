@@ -119,3 +119,27 @@ func PutTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request
 	models.SendData(rw, tag, "Updated tag", http.StatusOK)
 
 }
+
+func DeleteTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+	tagID, err := strconv.Atoi(id)
+	if err != nil {
+		models.HandleError(rw, http.StatusNotFound, "Invalid tag ID", err)
+
+		return
+	}
+	existsTag := databaseRepo.ExistsID("Tags", tagID)
+
+	if !existsTag {
+		models.HandleError(rw, http.StatusNotFound, "tag not found", nil)
+		return
+	}
+
+	if err := databaseRepo.DeleteTag(tagID); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error deleting skin into the database", err)
+		return
+	}
+	models.SendData(rw, tagID, "deleted skin ", http.StatusOK)
+
+}
