@@ -42,5 +42,15 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 		})
 	})
 
+	router.Route("/api/skins", func(router chi.Router) {
+		router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			handlers.GetSkins(databaseRepo, w, r)
+		})
+		router.Get("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+			handlers.GetSkinsId(databaseRepo, w, r)
+		})
+
+	})
+
 	return router
 }
