@@ -36,6 +36,12 @@ func GetInfoChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *h
 		models.HandleError(rw, http.StatusUnprocessableEntity, "Invalid champion ID", err)
 		return
 	}
+	existsChampion := databaseRepo.ExistsID("Champion", championID)
+
+	if !existsChampion {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
+		return
+	}
 
 	champion, err := databaseRepo.GetInfoChampionId(championID)
 	if err != nil {
@@ -145,6 +151,12 @@ func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.
 	championID, err := strconv.Atoi(id)
 	if err != nil {
 		models.HandleError(rw, http.StatusUnprocessableEntity, "Invalid champion ID", err)
+		return
+	}
+	existsChampion := databaseRepo.ExistsID("Champion", championID)
+
+	if !existsChampion {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
 		return
 	}
 
