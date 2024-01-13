@@ -80,3 +80,42 @@ func CreateTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Requ
 	models.SendData(rw, tag, "Tag created", http.StatusOK)
 
 }
+
+func PutTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+	tagID, err := strconv.Atoi(id)
+	if err != nil {
+		models.HandleError(rw, http.StatusNotFound, "Invalid Tad ID", err)
+		return
+	}
+
+	tag := models.Tags{}
+	decoder := json.NewDecoder(r.Body)
+
+	// Decode the JSON of the request body
+	if err := decoder.Decode(&tag); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error decoding JSON", err)
+		return
+	}
+	existsChampion := databaseRepo.ExistsID("Champion", tag.IdChampion)
+	if !existsChampion {
+		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
+		return
+	}
+
+	existstag := databaseRepo.ExistsID("Tags", tagID)
+
+	if !existstag {
+		models.HandleError(rw, http.StatusNotFound, "tags not found", nil)
+		return
+	}
+
+	// Database updated logic
+	if err := databaseRepo.UpdateTag(tagID, tag); err != nil {
+		models.HandleError(rw, http.StatusUnprocessableEntity, "Error updating tag into the database", err)
+		return
+	}
+	models.SendData(rw, tag, "Updated tag", http.StatusOK)
+
+}
