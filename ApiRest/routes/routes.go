@@ -57,6 +57,10 @@ func Routes(databaseRepo *db.RealDBRepo) http.Handler {
 			handlers.PutSkin(databaseRepo, w, r)
 		})
 
+		router.Delete("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+			handlers.DeleteSkin(databaseRepo, w, r)
+		})
+
 	})
 
 	return router
