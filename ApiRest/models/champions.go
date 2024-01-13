@@ -22,7 +22,7 @@ type Skins struct {
 }
 
 type Tags struct {
-	Id          int    `json:"id"`
-	Id_Champion int    `json:"idChampion"`
-	Name        string `json:"name"`
+	Id         int    `json:"id"`
+	IdChampion int    `json:"idChampion"`
+	Name       string `json:"name"`
 }
