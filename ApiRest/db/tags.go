@@ -76,3 +76,9 @@ func (r *RealDBRepo) UpdateTag(tagID int, Tag models.Tags) error {
 	_, err := r.DB.Exec(sql, Tag.IdChampion, Tag.Name, tagID)
 	return err
 }
+
+func (r *RealDBRepo) DeleteTag(tagID int) error {
+	sql := "DELETE FROM Tags WHERE Id=?"
+	_, err := r.DB.Exec(sql, tagID)
+	return err
+}
