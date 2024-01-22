@@ -12,7 +12,7 @@ import (
 )
 
 func GetSkins(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
-	skins, err := databaseRepo.GetSkins()
+	skins, err := databaseRepo.GetSkinList()
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -44,7 +44,7 @@ func GetSkinsId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Req
 		return
 	}
 
-	skin, err := databaseRepo.GetSkinId(SkinID)
+	skin, err := databaseRepo.GetSkinByID(SkinID)
 	if err != nil {
 		models.HandleError(rw, http.StatusNotFound, "skin not found", nil)
 		return
@@ -112,7 +112,7 @@ func PutSkin(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Reques
 	}
 
 	// Database updated logic
-	if err := databaseRepo.UpdateSkin(skinID, skin); err != nil {
+	if err := databaseRepo.UpdateSkinByID(skinID, skin); err != nil {
 		models.HandleError(rw, http.StatusUnprocessableEntity, "Error updating skin into the database", err)
 		return
 	}
@@ -136,7 +136,7 @@ func DeleteSkin(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Req
 		return
 	}
 
-	if err := databaseRepo.DeleteSkin(skinID); err != nil {
+	if err := databaseRepo.DeleteSkinByID(skinID); err != nil {
 		models.HandleError(rw, http.StatusUnprocessableEntity, "Error deleting skin into the database", err)
 		return
 	}

@@ -12,7 +12,7 @@ import (
 )
 
 func GetTags(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
-	tags, err := databaseRepo.GetTags()
+	tags, err := databaseRepo.GetTagsList()
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -44,7 +44,7 @@ func GetTagId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	tag, err := databaseRepo.GetTagId(tagID)
+	tag, err := databaseRepo.GetTagByID(tagID)
 	if err != nil {
 		models.HandleError(rw, http.StatusNotFound, "tag not found", nil)
 		return
@@ -112,7 +112,7 @@ func PutTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request
 	}
 
 	// Database updated logic
-	if err := databaseRepo.UpdateTag(tagID, tag); err != nil {
+	if err := databaseRepo.UpdateTagByID(tagID, tag); err != nil {
 		models.HandleError(rw, http.StatusUnprocessableEntity, "Error updating tag into the database", err)
 		return
 	}
@@ -136,7 +136,7 @@ func DeleteTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if err := databaseRepo.DeleteTag(tagID); err != nil {
+	if err := databaseRepo.DeleteTagByID(tagID); err != nil {
 		models.HandleError(rw, http.StatusUnprocessableEntity, "Error deleting skin into the database", err)
 		return
 	}

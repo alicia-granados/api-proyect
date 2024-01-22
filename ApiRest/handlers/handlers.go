@@ -12,7 +12,7 @@ import (
 )
 
 func AllInfoChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
-	champions, err := databaseRepo.AllInfoChampions()
+	champions, err := databaseRepo.GetChampionsDetailList()
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -43,7 +43,7 @@ func GetInfoChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *h
 		return
 	}
 
-	champion, err := databaseRepo.GetInfoChampionId(championID)
+	champion, err := databaseRepo.GetChampionDetailsByID(championID)
 	if err != nil {
 		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
 		return
@@ -96,7 +96,7 @@ func PutChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Re
 		return
 	}
 	// Database updated logic
-	if err := databaseRepo.UpdateChampion(championID, champion); err != nil {
+	if err := databaseRepo.UpdateChampionByID(championID, champion); err != nil {
 		models.HandleError(rw, http.StatusUnprocessableEntity, "Error updating champion into the database", err)
 		return
 	}
@@ -120,7 +120,7 @@ func DeleteChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http
 		return
 	}
 
-	if err := databaseRepo.DeleteChampion(championID); err != nil {
+	if err := databaseRepo.DeleteChampionByID(championID); err != nil {
 		models.HandleError(rw, http.StatusUnprocessableEntity, "Error deleting champion into the database", err)
 		return
 	}
@@ -160,7 +160,7 @@ func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.
 		return
 	}
 
-	champion, err := databaseRepo.GetChampionId(championID)
+	champion, err := databaseRepo.GetChampionByID(championID)
 	if err != nil {
 		models.HandleError(rw, http.StatusNotFound, "Champion not found", nil)
 		return

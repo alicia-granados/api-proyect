@@ -6,7 +6,7 @@ import (
 
 type Champion []models.Champion
 
-func (r *RealDBRepo) AllInfoChampions() (Champion, error) {
+func (r *RealDBRepo) GetChampionsDetailList() (Champion, error) {
 	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore, Skins.Id, Skins.Id_Num, Skins.Num, Skins.Id_Champion, Skins.Name, Tags.Id, Tags.Id_Champion, Tags.Name FROM Champion LEFT JOIN Skins ON Champion.Id = Skins.Id_Champion LEFT JOIN Tags ON Champion.Id = Tags.Id_Champion"
 
 	champions := Champion{}
@@ -46,7 +46,7 @@ func (r *RealDBRepo) InsertChampion(name, title, lore string) error {
 	return err
 }
 
-func (r *RealDBRepo) GetInfoChampionId(championId int) (Champion, error) {
+func (r *RealDBRepo) GetChampionDetailsByID(championId int) (Champion, error) {
 	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore, Skins.Id, Skins.Id_Num,  Skins.Num,  Skins.Id_Champion,  Skins.Name,  Tags.Id, Tags.Id_Champion, Tags.Name  FROM Champion LEFT JOIN Skins ON Champion.Id = Skins.Id_Champion LEFT JOIN Tags ON Champion.Id = Tags.Id_Champion WHERE Champion.Id = ? "
 
 	champions := Champion{}
@@ -84,15 +84,15 @@ func (r *RealDBRepo) GetInfoChampionId(championId int) (Champion, error) {
 	return champions, nil
 }
 
-// UpdateChampion update a champion into the database and returns err
-func (r *RealDBRepo) UpdateChampion(championID int, Champion models.Champion) error {
+// UpdateChampionByID update a champion into the database and returns err
+func (r *RealDBRepo) UpdateChampionByID(championID int, Champion models.Champion) error {
 	sql := "UPDATE Champion SET  Name=?, Title= ? , Lore=? WHERE Id=?"
 	_, err := r.DB.Exec(sql, Champion.Name, Champion.Title, Champion.Lore, championID)
 	return err
 }
 
-// DeleteChampion delete a champion into the database
-func (r *RealDBRepo) DeleteChampion(championID int) error {
+// DeleteChampionByID delete a champion into the database
+func (r *RealDBRepo) DeleteChampionByID(championID int) error {
 	sql := "DELETE FROM Champion  WHERE Id=?"
 	_, err := r.DB.Exec(sql, championID)
 	return err
@@ -127,7 +127,7 @@ func (r *RealDBRepo) GetChampions() (Champion, error) {
 	return champions, nil
 }
 
-func (r *RealDBRepo) GetChampionId(championId int) (Champion, error) {
+func (r *RealDBRepo) GetChampionByID(championId int) (Champion, error) {
 	sql := "SELECT Champion.Id, Champion.Name, Champion.Title, Champion.Lore FROM Champion WHERE Champion.Id = ? "
 
 	champions := Champion{}

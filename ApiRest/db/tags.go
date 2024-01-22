@@ -6,7 +6,7 @@ import (
 
 type Tags []models.Tags
 
-func (r *RealDBRepo) GetTags() (Tags, error) {
+func (r *RealDBRepo) GetTagsList() (Tags, error) {
 	sql := "SELECT Tags.Id, Tags.Id_Champion, Tags.Name FROM Tags"
 
 	Tagss := Tags{}
@@ -35,7 +35,7 @@ func (r *RealDBRepo) GetTags() (Tags, error) {
 	return Tagss, nil
 }
 
-func (r *RealDBRepo) GetTagId(TagsId int) (Tags, error) {
+func (r *RealDBRepo) GetTagByID(TagsId int) (Tags, error) {
 	sql := "SELECT Tags.Id, Tags.Id_Champion, Tags.Name FROM Tags WHERE Tags.Id = ? "
 
 	Tagss := Tags{}
@@ -71,13 +71,13 @@ func (r *RealDBRepo) InsertTag(championID int, tag string) error {
 	return err
 }
 
-func (r *RealDBRepo) UpdateTag(tagID int, Tag models.Tags) error {
+func (r *RealDBRepo) UpdateTagByID(tagID int, Tag models.Tags) error {
 	sql := "UPDATE Tags SET Id_Champion=?,  Name=? WHERE Id=?"
 	_, err := r.DB.Exec(sql, Tag.IdChampion, Tag.Name, tagID)
 	return err
 }
 
-func (r *RealDBRepo) DeleteTag(tagID int) error {
+func (r *RealDBRepo) DeleteTagByID(tagID int) error {
 	sql := "DELETE FROM Tags WHERE Id=?"
 	_, err := r.DB.Exec(sql, tagID)
 	return err

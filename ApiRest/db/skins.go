@@ -6,7 +6,7 @@ import (
 
 type Skins []models.Skins
 
-func (r *RealDBRepo) GetSkins() (Skins, error) {
+func (r *RealDBRepo) GetSkinList() (Skins, error) {
 	sql := "SELECT Skins.Id, Skins.Id_Num, Skins.Num, Skins.Id_Champion, Skins.Name FROM Skins"
 
 	Skinss := Skins{}
@@ -35,7 +35,7 @@ func (r *RealDBRepo) GetSkins() (Skins, error) {
 	return Skinss, nil
 }
 
-func (r *RealDBRepo) GetSkinId(SkinsId int) (Skins, error) {
+func (r *RealDBRepo) GetSkinByID(SkinsId int) (Skins, error) {
 	sql := "SELECT Skins.Id, Skins.Id_Num, Skins.Num, Skins.Id_Champion, Skins.Name FROM Skins WHERE Skins.Id = ? "
 
 	Skinss := Skins{}
@@ -71,13 +71,13 @@ func (r *RealDBRepo) InsertSkin(Id_Num string, num, championID int, name string)
 	return err
 }
 
-func (r *RealDBRepo) UpdateSkin(skinID int, Skin models.Skins) error {
+func (r *RealDBRepo) UpdateSkinByID(skinID int, Skin models.Skins) error {
 	sql := "UPDATE Skins SET  Id_Num=?, Num= ? , Id_Champion=?,  Name=? WHERE Id=?"
 	_, err := r.DB.Exec(sql, Skin.IdNum, Skin.Num, Skin.IdChampion, Skin.Name, skinID)
 	return err
 }
 
-func (r *RealDBRepo) DeleteSkin(skinID int) error {
+func (r *RealDBRepo) DeleteSkinByID(skinID int) error {
 	sql := "DELETE FROM Skins WHERE Id=?"
 	_, err := r.DB.Exec(sql, skinID)
 	return err
