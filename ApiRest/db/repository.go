@@ -6,7 +6,7 @@ type DatabaseRepo interface {
 	Connect()
 	Close()
 	Ping()
-	ExistsID(table string, id int) (int, error)
+	ExistsID(table string, id int) bool
 
 	ChampionRead
 	ChampionWriten
@@ -17,10 +17,10 @@ type DatabaseRepo interface {
 }
 
 type ChampionRead interface {
-	GetChampions() (models.Champion, error)
-	GetChampionsDetailList() (models.Champion, error)
-	GetChampionByID(championId int) (models.Champion, error)
-	GetChampionDetailsByID(championId int) (models.Champion, error)
+	GetChampions() (Champion, error)
+	GetChampionsDetailList() (Champion, error)
+	GetChampionByID(championId int) (Champion, error)
+	GetChampionDetailsByID(championId int) (Champion, error)
 }
 
 type ChampionWriten interface {
@@ -30,8 +30,8 @@ type ChampionWriten interface {
 }
 
 type SkinRepoRead interface {
-	GetSkinList() (models.Skins, error)
-	GetSkinByID(skinID int) (models.Skins, error)
+	GetSkinList() (Skins, error)
+	GetSkinByID(skinID int) (Skins, error)
 }
 
 type SkinRepoWriten interface {
@@ -41,8 +41,8 @@ type SkinRepoWriten interface {
 }
 
 type TagRepoRead interface {
-	GetTagsList() (models.Tags, error)
-	GetTagByID(tagID int) (models.Tags, error)
+	GetTagsList() (Tags, error)
+	GetTagByID(tagID int) (Tags, error)
 }
 
 type TagRepoWriten interface {

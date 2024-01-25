@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func AllInfoChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func AllInfoChampions(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 	champions, err := databaseRepo.GetChampionsDetailList()
 
 	if err != nil {
@@ -20,14 +20,14 @@ func AllInfoChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *ht
 			models.HandleError(rw, http.StatusNotFound, "no champions were found", nil)
 		} else {
 			// Otro tipo de error, devolver 500 Internal Server Error o manejar según el caso
-			models.HandleError(rw, http.StatusInternalServerError, "an unexpected error occurred while retrieving champions", err)
+			models.HandleError(rw, http.StatusInternalServerError, "an unexpected error occurred while retrieving champions ", err)
 		}
 		return
 	}
 	models.SendData(rw, champions, "info champions", http.StatusOK)
 }
 
-func GetInfoChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func GetInfoChampionId(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
@@ -51,7 +51,7 @@ func GetInfoChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *h
 	models.SendData(rw, champion, "get list champion by id", http.StatusOK)
 }
 
-func CreateChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func CreateChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	champion := models.Champion{}
 	decoder := json.NewDecoder(r.Body)
@@ -71,7 +71,7 @@ func CreateChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http
 
 }
 
-func PutChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func PutChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	championID, err := strconv.Atoi(id)
@@ -104,7 +104,7 @@ func PutChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Re
 
 }
 
-func DeleteChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func DeleteChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	championID, err := strconv.Atoi(id)
@@ -128,7 +128,7 @@ func DeleteChampion(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http
 
 }
 
-func GetChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func GetChampions(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 	champions, err := databaseRepo.GetChampions()
 
 	if err != nil {
@@ -144,7 +144,7 @@ func GetChampions(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.R
 	models.SendData(rw, champions, "get champions", http.StatusOK)
 }
 
-func GetChampionId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func GetChampionId(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 

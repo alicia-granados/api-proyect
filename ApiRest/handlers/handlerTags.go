@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func GetTags(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func GetTags(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 	tags, err := databaseRepo.GetTagsList()
 
 	if err != nil {
@@ -27,7 +27,7 @@ func GetTags(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Reques
 	models.SendData(rw, tags, "get tags", http.StatusOK)
 }
 
-func GetTagId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func GetTagId(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
@@ -52,7 +52,7 @@ func GetTagId(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Reque
 	models.SendData(rw, tag, "get tag by id", http.StatusOK)
 }
 
-func CreateTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func CreateTag(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	tag := models.Tags{}
 	decoder := json.NewDecoder(r.Body)
@@ -81,7 +81,7 @@ func CreateTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Requ
 
 }
 
-func PutTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func PutTag(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	tagID, err := strconv.Atoi(id)
@@ -120,7 +120,7 @@ func PutTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request
 
 }
 
-func DeleteTag(databaseRepo *db.RealDBRepo, rw http.ResponseWriter, r *http.Request) {
+func DeleteTag(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	tagID, err := strconv.Atoi(id)
