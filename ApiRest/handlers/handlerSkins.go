@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func GetSkins(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerGetSkinList(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 	skins, err := databaseRepo.GetSkinList()
 
 	if err != nil {
@@ -27,7 +27,7 @@ func GetSkins(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Requ
 	models.SendData(rw, skins, "get skins", http.StatusOK)
 }
 
-func GetSkinsId(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerGetSkinById(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
@@ -52,7 +52,7 @@ func GetSkinsId(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Re
 	models.SendData(rw, skin, "get skin by id", http.StatusOK)
 }
 
-func CreateSkins(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerInsertSkin(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	skin := models.Skins{}
 	decoder := json.NewDecoder(r.Body)
@@ -81,7 +81,7 @@ func CreateSkins(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.R
 
 }
 
-func PutSkin(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerUpdateSkinByID(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	skinID, err := strconv.Atoi(id)
@@ -120,7 +120,7 @@ func PutSkin(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Reque
 
 }
 
-func DeleteSkin(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerDeleteSkinByID(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	skinID, err := strconv.Atoi(id)
