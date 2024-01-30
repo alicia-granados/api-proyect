@@ -10,20 +10,20 @@ import (
 
 func tagRoutes(router chi.Router, databaseRepo db.DatabaseRepo) {
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetTags(databaseRepo, w, r)
+		handlers.HandlerGetTagsList(databaseRepo, w, r)
 	})
 	router.Get("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetTagId(databaseRepo, w, r)
+		handlers.HandlerGetTagByID(databaseRepo, w, r)
 	})
 	router.Post("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateTag(databaseRepo, w, r)
+		handlers.HandlerInsertTag(databaseRepo, w, r)
 	})
 
 	router.Put("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.PutTag(databaseRepo, w, r)
+		handlers.HandlerUpdateTagByID(databaseRepo, w, r)
 	})
 
 	router.Delete("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteTag(databaseRepo, w, r)
+		handlers.HandlerDeleteTagByID(databaseRepo, w, r)
 	})
 }
