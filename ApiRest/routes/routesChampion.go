@@ -10,27 +10,27 @@ import (
 
 func championRoutes(router chi.Router, databaseRepo db.DatabaseRepo) {
 	router.Get("/info/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.AllInfoChampions(databaseRepo, w, r)
+		handlers.HandlerGetChampionsDetailList(databaseRepo, w, r)
 	})
 	router.Get("/info/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetInfoChampionId(databaseRepo, w, r)
+		handlers.HandlerGetChampionDetailsByID(databaseRepo, w, r)
 	})
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetChampions(databaseRepo, w, r)
+		handlers.HandlerGetChampions(databaseRepo, w, r)
 	})
 	router.Get("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetChampionId(databaseRepo, w, r)
+		handlers.HandlerGetChampionById(databaseRepo, w, r)
 	})
 	router.Post("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateChampion(databaseRepo, w, r)
+		handlers.HandlerInsertChampion(databaseRepo, w, r)
 	})
 
 	router.Put("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.PutChampion(databaseRepo, w, r)
+		handlers.HandlerUpdateChampionByID(databaseRepo, w, r)
 	})
 
 	router.Delete("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteChampion(databaseRepo, w, r)
+		handlers.HandlerDeleteChampionByID(databaseRepo, w, r)
 	})
 }

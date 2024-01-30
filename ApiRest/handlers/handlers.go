@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func AllInfoChampions(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerGetChampionsDetailList(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 	champions, err := databaseRepo.GetChampionsDetailList()
 
 	if err != nil {
@@ -27,7 +27,7 @@ func AllInfoChampions(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *h
 	models.SendData(rw, champions, "info champions", http.StatusOK)
 }
 
-func GetInfoChampionId(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerGetChampionDetailsByID(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
@@ -51,7 +51,7 @@ func GetInfoChampionId(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *
 	models.SendData(rw, champion, "get list champion by id", http.StatusOK)
 }
 
-func CreateChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerInsertChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	champion := models.Champion{}
 	decoder := json.NewDecoder(r.Body)
@@ -71,7 +71,7 @@ func CreateChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *htt
 
 }
 
-func PutChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerUpdateChampionByID(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	championID, err := strconv.Atoi(id)
@@ -104,7 +104,7 @@ func PutChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.R
 
 }
 
-func DeleteChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerDeleteChampionByID(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	championID, err := strconv.Atoi(id)
@@ -128,7 +128,7 @@ func DeleteChampion(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *htt
 
 }
 
-func GetChampions(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerGetChampions(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 	champions, err := databaseRepo.GetChampions()
 
 	if err != nil {
@@ -144,7 +144,7 @@ func GetChampions(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.
 	models.SendData(rw, champions, "get champions", http.StatusOK)
 }
 
-func GetChampionId(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
+func HandlerGetChampionById(databaseRepo db.DatabaseRepo, rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
